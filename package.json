@@ -1,5 +1,5 @@
 {
-  "name": "@example/bplus-tree",
+  "name": "@prachwal_org/bplus-tree",
   "version": "1.0.0",
   "description": "High-performance B+ Tree data structure implementation in TypeScript with visualization support",
   "main": "dist/lib/bplus-tree.js",
@@ -35,7 +35,7 @@
     "visualization",
     "mermaid"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Przemyslaw Rachwal <przemyslaw.rachwal@gmail.com>",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -43,12 +43,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/bplus-tree.git"
+    "url": "https://github.com/prachwal/bplus-tree.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/bplus-tree/issues"
+    "url": "https://github.com/prachwal/bplus-tree/issues"
   },
-  "homepage": "https://github.com/yourusername/bplus-tree#readme",
+  "homepage": "https://github.com/prachwal/bplus-tree#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
