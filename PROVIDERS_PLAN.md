@@ -8,7 +8,7 @@ Biblioteka B+ Tree wspiera pluggable storage providers poprzez prosty interfejs 
 
 ### FileStorageProvider
 
-- **Lokalizacja**: `src/examples/FileStorageProvider.ts`
+- **Lokalizacja**: `src/lib/StorageProviders/FileStorageProvider.ts`
 - **Opis**: Zapisuje dane do plików lokalnych
 - **Format**: MessagePack (skompresowany)
 - **Zalety**: Prosty, nie wymaga zewnętrznych usług
@@ -16,7 +16,7 @@ Biblioteka B+ Tree wspiera pluggable storage providers poprzez prosty interfejs 
 
 ### RedisStorageProvider
 
-- **Lokalizacja**: `src/examples/RedisStorageProvider.ts`
+- **Lokalizacja**: `src/lib/StorageProviders/RedisStorageProvider.ts`
 - **Opis**: Zapisuje dane do Redis z shardingiem poziomów
 - **Format**: MessagePack zakodowany w base64
 - **Zalety**: Szybki, współbieżny dostęp, skalowalny

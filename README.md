@@ -57,7 +57,7 @@ BPlusTree supports pluggable storage providers for persistence. The library incl
 
 ```typescript
 import { BPlusTree } from '@prachwal_org/bplus-tree';
-import { FileStorageProvider } from '@prachwal_org/bplus-tree/examples/FileStorageProvider';
+import { FileStorageProvider } from '@prachwal_org/bplus-tree';
 
 const tree = new BPlusTree<string>();
 const provider = new FileStorageProvider('tree-data.msgpack');
@@ -77,7 +77,7 @@ await tree.load(provider);
 
 ```typescript
 import { BPlusTree } from '@prachwal_org/bplus-tree';
-import { RedisStorageProvider } from '@prachwal_org/bplus-tree/examples/RedisStorageProvider';
+import { RedisStorageProvider } from '@prachwal_org/bplus-tree';
 
 const tree = new BPlusTree<string>();
 const provider = new RedisStorageProvider('my-tree-data');

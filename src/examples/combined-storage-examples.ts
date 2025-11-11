@@ -1,6 +1,6 @@
 import { BPlusTree } from '../lib/BPlusTree.js';
-import { FileStorageProvider } from './FileStorageProvider.js';
-import { RedisStorageProvider } from './RedisStorageProvider.js';
+import { FileStorageProvider } from '../lib/StorageProviders/FileStorageProvider.js';
+import { RedisStorageProvider } from '../lib/StorageProviders/RedisStorageProvider.js';
 
 // Połączony przykład testowania obu storage providerów sekwencyjnie
 async function combinedStorageExamples() {

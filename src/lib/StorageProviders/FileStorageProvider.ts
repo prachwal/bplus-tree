@@ -1,5 +1,5 @@
 import { writeFile, readFile } from 'fs/promises';
-import { StorageProvider } from '../lib/StorageProvider';
+import { StorageProvider } from './StorageProvider';
 
 // Przykład implementacji StorageProvider dla plików
 export class FileStorageProvider implements StorageProvider {

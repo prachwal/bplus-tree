@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { StorageProvider } from '../lib/StorageProvider';
+import { StorageProvider } from './StorageProvider';
 
 // Przykład implementacji StorageProvider dla Redis
 export class RedisStorageProvider implements StorageProvider {

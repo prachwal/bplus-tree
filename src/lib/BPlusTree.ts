@@ -1,5 +1,5 @@
 import { encode, decode } from '@msgpack/msgpack';
-import { StorageProvider } from './StorageProvider';
+import { StorageProvider } from './StorageProviders/StorageProvider';
 import { BaseNode } from './BaseNode';
 import { InnerNode } from './InnerNode';
 import { LeafNode } from './LeafNode';

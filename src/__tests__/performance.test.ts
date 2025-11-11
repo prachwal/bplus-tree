@@ -1,7 +1,7 @@
 import { describe, test } from '@jest/globals';
 import { BPlusTree } from '../lib/BPlusTree';
-import { FileStorageProvider } from '../examples/FileStorageProvider';
-import { RedisStorageProvider } from '../examples/RedisStorageProvider';
+import { FileStorageProvider } from '../lib/StorageProviders/FileStorageProvider';
+import { RedisStorageProvider } from '../lib/StorageProviders/RedisStorageProvider';
 
 describe('Performance Benchmarks', () => {
   const sizes = [1000, 5000, 10000];
