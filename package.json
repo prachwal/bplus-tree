@@ -22,7 +22,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "npm run build && npm test"
+    "check-version": "node check-version.mjs",
+    "prepublishOnly": "npm run check-version && npm run build && npm test"
   },
   "keywords": [
     "b-plus-tree",
