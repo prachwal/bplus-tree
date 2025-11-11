@@ -6,7 +6,7 @@ const packageName = pkg.name;
 const currentVersion = pkg.version;
 
 try {
-  const publishedVersion = execSync(`npm view ${packageName} version`, { encoding: 'utf8' }).trim();
+  const publishedVersion = execSync(`npm view ${packageName} version`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
   if (currentVersion <= publishedVersion) {
     console.error(`Version ${currentVersion} is not greater than published ${publishedVersion}`);
     process.exit(1);
