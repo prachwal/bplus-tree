@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 bplus-tree-diagram.md
 tree-data.json
 benchmark-*.json
+tree-data-50k.json
