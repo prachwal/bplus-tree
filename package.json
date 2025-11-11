@@ -16,7 +16,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc",
+    "clean": "rm -rf dist",
     "dev": "tsc --watch",
     "start": "node dist/main.js",
     "test": "jest",
