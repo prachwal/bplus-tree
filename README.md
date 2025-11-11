@@ -1,29 +1,30 @@
 # BPlusTree
 
-[![npm version](https://badge.fury.io/js/%40example%2Fbplus-tree.svg)](https://badge.fury.io/js/%40example%2Fbplus-tree)
+[![npm version](https://badge.fury.io/js/%40prachwal_org%2Fbplus-tree.svg)](https://badge.fury.io/js/%40prachwal_org%2Fbplus-tree)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A high-performance B+ Tree data structure implementation in TypeScript with comprehensive visualization support.
+A high-performance B+ Tree data structure implementation in TypeScript with comprehensive visualization support and pluggable storage providers.
 
 ## Features
 
-- 🚀 **High Performance**: Optimized B+ Tree implementation
+- 🚀 **High Performance**: Optimized B+ Tree implementation with configurable capacity
 - 🔍 **Type Safety**: Full TypeScript support with generics
 - 📊 **Visualization**: ASCII tree printing and Mermaid diagram generation
-- 💾 **Persistence**: Save diagrams to files
-- 🧪 **Well Tested**: 96%+ test coverage
+- 💾 **Persistence**: Pluggable storage providers (File, Redis, and more)
+- 🧪 **Well Tested**: 93%+ test coverage with performance benchmarks
 - 📦 **ES Modules**: Modern JavaScript module support
+- 🔧 **Scalable**: Handles 100k+ elements efficiently
 
 ## Installation
 
 ```bash
-npm install @example/bplus-tree
+npm install @prachwal_org/bplus-tree
 ```
 
 ## Usage
 
 ```typescript
-import { BPlusTree } from '@example/bplus-tree';
+import { BPlusTree } from '@prachwal_org/bplus-tree';
 
 // Create a new B+ Tree
 const tree = new BPlusTree<string>();
@@ -46,6 +47,72 @@ tree.printAsciiTree(); // Print ASCII tree
 tree.saveMermaidToFile('tree.md'); // Save diagram to file
 ```
 
+## Storage Providers
+
+BPlusTree supports pluggable storage providers for persistence. The library includes built-in providers and allows custom implementations.
+
+### Built-in Providers
+
+#### File Storage
+
+```typescript
+import { BPlusTree } from '@prachwal_org/bplus-tree';
+import { FileStorageProvider } from '@prachwal_org/bplus-tree/examples/FileStorageProvider';
+
+const tree = new BPlusTree<string>();
+const provider = new FileStorageProvider('tree-data.msgpack');
+
+// Insert data
+tree.insert(1, 'value1');
+tree.insert(2, 'value2');
+
+// Save to file
+await tree.save(provider);
+
+// Load from file
+await tree.load(provider);
+```
+
+#### Redis Storage
+
+```typescript
+import { BPlusTree } from '@prachwal_org/bplus-tree';
+import { RedisStorageProvider } from '@prachwal_org/bplus-tree/examples/RedisStorageProvider';
+
+const tree = new BPlusTree<string>();
+const provider = new RedisStorageProvider('my-tree-data');
+
+// Connect to Redis
+await provider.connect();
+
+// Save/Load operations
+await tree.save(provider);
+await tree.load(provider);
+
+// Cleanup
+await provider.disconnect();
+```
+
+### Custom Providers
+
+Implement the `StorageProvider` interface for custom storage backends:
+
+```typescript
+import { StorageProvider } from '@prachwal_org/bplus-tree';
+
+class MyCustomProvider implements StorageProvider {
+    async save(data: Buffer): Promise<void> {
+        // Your save logic here
+    }
+
+    async load(): Promise<Buffer> {
+        // Your load logic here
+    }
+}
+```
+
+See [PROVIDERS_PLAN.md](PROVIDERS_PLAN.md) for a comprehensive list of planned storage providers.
+
 ## API
 
 ### BPlusTree&lt;T&gt;
@@ -59,22 +126,36 @@ new BPlusTree<T>()
 #### Methods
 
 ##### `insert(key: number, value: T): void`
+
 Inserts a key-value pair into the tree.
 
 ##### `lookup(key: number): T | null`
+
 Retrieves the value associated with the given key.
 
 ##### `getAllKeys(): number[]`
+
 Returns all keys in the tree in sorted order.
 
 ##### `generateMermaid(): string`
+
 Generates a Mermaid diagram representing the tree structure.
 
 ##### `printAsciiTree(): void`
+
 Prints an ASCII representation of the tree to the console.
 
 ##### `saveMermaidToFile(filename?: string): void`
+
 Saves a Mermaid diagram to a Markdown file.
+
+##### `save(provider: StorageProvider): Promise<void>`
+
+Saves the tree to a storage provider.
+
+##### `load(provider: StorageProvider): Promise<void>`
+
+Loads the tree from a storage provider.
 
 ## Examples
 
@@ -143,7 +224,7 @@ npm run dev
 
 This implementation uses a B+ Tree with the following characteristics:
 
-- **Order**: Configurable capacity (default: 4)
+- **Order**: Configurable capacity (default: 100)
 - **Leaf Level**: All data is stored in leaf nodes
 - **Internal Nodes**: Contain only keys and child pointers
 - **Balanced**: All leaf nodes are at the same level
