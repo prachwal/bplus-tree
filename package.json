@@ -1,0 +1,72 @@
+{
+  "name": "@example/bplus-tree",
+  "version": "1.0.0",
+  "description": "High-performance B+ Tree data structure implementation in TypeScript with visualization support",
+  "main": "dist/lib/bplus-tree.js",
+  "types": "dist/lib/bplus-tree.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/bplus-tree.d.ts",
+      "import": "./dist/lib/bplus-tree.js"
+    }
+  },
+  "files": [
+    "dist/lib/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/main.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "b-plus-tree",
+    "b-tree",
+    "data-structure",
+    "typescript",
+    "algorithm",
+    "database",
+    "indexing",
+    "visualization",
+    "mermaid"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/bplus-tree.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/bplus-tree/issues"
+  },
+  "homepage": "https://github.com/yourusername/bplus-tree#readme",
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src"],
+    "testMatch": ["**/__tests__/**/*.ts", "**/?(*.)+(spec|test).ts"],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts",
+      "!src/main.ts"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
+  }
+}
