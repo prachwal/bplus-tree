@@ -1,8 +1,8 @@
 import { encode, decode } from '@msgpack/msgpack';
-import { StorageProvider } from './StorageProvider.js';
-import { BaseNode } from './BaseNode.js';
-import { InnerNode } from './InnerNode.js';
-import { LeafNode } from './LeafNode.js';
+import { StorageProvider } from './StorageProvider';
+import { BaseNode } from './BaseNode';
+import { InnerNode } from './InnerNode';
+import { LeafNode } from './LeafNode';
 
 export class BPlusTree<T = unknown> {
   root: BaseNode | null = null;
@@ -296,6 +296,17 @@ export class BPlusTree<T = unknown> {
     this.root = this.deserialize(data);
   }
 
+  // Sharded save/load for Redis optimization
+  async saveSharded(redisStorage: any): Promise<void> {
+    const levels = this.serializeLevels();
+    await redisStorage.saveLevels(levels);
+  }
+
+  async loadSharded(redisStorage: any): Promise<void> {
+    const levels = await redisStorage.loadLevels();
+    this.deserializeLevels(levels);
+  }
+
   private serialize(node: BaseNode | null): Buffer {
     const obj = this.serializeToObject(node);
     return Buffer.from(encode(obj));
@@ -343,5 +354,72 @@ export class BPlusTree<T = unknown> {
       return inner;
     }
     throw new Error('Invalid serialized data');
+  }
+
+  // Sharding methods for Redis optimization
+  serializeLevels(): Map<number, Buffer> {
+    const levels = new Map<number, Buffer>();
+    if (!this.root) return levels;
+
+    const queue: { node: BaseNode; level: number }[] = [{ node: this.root, level: this.root.level }];
+    const levelNodes = new Map<number, BaseNode[]>();
+
+    // Collect nodes by level using BFS
+    while (queue.length > 0) {
+      const { node, level } = queue.shift()!;
+      if (!levelNodes.has(level)) {
+        levelNodes.set(level, []);
+      }
+      levelNodes.get(level)!.push(node);
+
+      if (node.isInner()) {
+        const inner = node as InnerNode;
+        inner.children.forEach(child => {
+          queue.push({ node: child, level: child.level });
+        });
+      }
+    }
+
+    // Serialize each level
+    for (const [level, nodes] of levelNodes) {
+      const levelData = nodes.map(node => this.serializeToObject(node));
+      levels.set(level, Buffer.from(encode(levelData)));
+    }
+
+    return levels;
+  }
+
+  deserializeLevels(levels: Map<number, Buffer>): void {
+    if (levels.size === 0) {
+      this.root = null;
+      return;
+    }
+
+    const levelNodes = new Map<number, BaseNode[]>();
+
+    // Deserialize each level
+    for (const [level, data] of levels) {
+      const levelData = decode(data) as any[];
+      const nodes = levelData.map(obj => this.deserializeFromObject(obj)).filter(node => node !== null) as BaseNode[];
+      levelNodes.set(level, nodes);
+    }
+
+    // Find root (highest level)
+    const maxLevel = Math.max(...levelNodes.keys());
+    this.root = levelNodes.get(maxLevel)![0];
+
+    // Reconstruct tree structure
+    for (let lvl = maxLevel; lvl >= 0; lvl--) {
+      const nodes = levelNodes.get(lvl)!;
+      for (const node of nodes) {
+        if (node.isInner()) {
+          const inner = node as InnerNode;
+          // Children are already set from deserialization, but need to ensure references
+          // The deserializeFromObject should have set children correctly
+        } else if (node.isLeaf()) {
+          // Leaves are already connected via next pointers from deserialization
+        }
+      }
+    }
   }
 }

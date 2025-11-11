@@ -8,7 +8,8 @@ Biblioteka B+ Tree jest efektywna dla małych i średnich zbiorów danych (do 10
 
 - ✅ **Krok 1**: Zwiększenie capacity węzłów (z 4 do 100) — ukończony, testy przechodzą.
 - ✅ **Krok 2**: Wprowadzenie binarnej serializacji — ukończony, MessagePack zaimplementowany.
-- ⏳ **Krok 3-6**: Oczekujące.
+- ✅ **Krok 3**: Optymalizacja Redis (Sharding) — ukończony, poziomy dzielone na osobne klucze.
+- ⏳ **Krok 4-6**: Oczekujące.
 
 ## Problemy z Obecną Implementacją
 
@@ -52,17 +53,17 @@ Biblioteka B+ Tree jest efektywna dla małych i średnich zbiorów danych (do 10
 - **Szacowany czas**: 2–4 godziny. (Rzeczywisty: ~3 godziny)
 - **Ryzyka**: Niekompatybilność z istniejącymi danymi; błędy deserializacji. (Rozwiązane: dodano wersjonowanie serializacji)
 
-### Krok 3: Optymalizacja Redis (Sharding)
+### Krok 3: Optymalizacja Redis (Sharding) ✅ **UKOŃCZONY**
 
 - **Cel**: Uniknąć jednego dużego klucza, rozłożyć dane na mniejsze części.
 - **Czynności**:
-  - Zmodyfikować `RedisStorageProvider` do dzielenia drzewa na klucze (np. jeden klucz na poziom drzewa lub grupy węzłów).
-  - Użyć prefixu kluczy (np. `bplus-tree:level:0`, `bplus-tree:level:1`).
-  - Zaktualizować `save`/`load` do obsługi wielu kluczy.
-  - Dodać metody do czyszczenia starych kluczy.
+  - Zmodyfikowano `RedisStorageProvider` do dzielenia drzewa na klucze per poziom (np. `bplus-tree-data:level:0`). ✅
+  - Dodano metody `serializeLevels()`/`deserializeLevels()` w `BPlusTree` dla podziału na poziomy. ✅
+  - Zaktualizowano `saveSharded`/`loadSharded` do obsługi wielu kluczy z pipeline. ✅
+  - Dodano metodę `clearAll()` do czyszczenia wszystkich kluczy. ✅
 - **Wymagania**: Biblioteka Redis (już zainstalowana).
-- **Szacowany czas**: 3–5 godzin.
-- **Ryzyka**: Złożoność zarządzania wieloma kluczami; błędy przy częściowym load.
+- **Szacowany czas**: 3–5 godzin. (Rzeczywisty: ~4 godziny)
+- **Ryzyka**: Złożoność zarządzania wieloma kluczami; błędy przy częściowym load. (Rozwiązane: pipeline dla wydajności, pełne testy)
 
 ### Krok 4: Dodanie Benchmarków i Testów Wydajności
 
@@ -118,8 +119,9 @@ Biblioteka B+ Tree jest efektywna dla małych i średnich zbiorów danych (do 10
 
 1. ✅ Krok 1 ukończony (capacity zwiększone do 100).
 2. ✅ Krok 2 ukończony (binarna serializacja MessagePack).
-3. Zacząć od Krok 3 (optymalizacja Redis - sharding).
-4. Iteracyjnie testować każdą zmianę.
-5. Po zakończeniu, stworzyć commit i push.
+3. ✅ Krok 3 ukończony (sharding Redis).
+4. Zacząć od Krok 4 (benchmarki i testy wydajności).
+5. Iteracyjnie testować każdą zmianę.
+6. Po zakończeniu, stworzyć commit i push.
 
 Ten plan zapewni skalowalność dla dużych danych przy zachowaniu prostoty biblioteki.

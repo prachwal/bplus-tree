@@ -1,4 +1,4 @@
-import { InnerNode } from './InnerNode.js';
+import { InnerNode } from './InnerNode';
 
 
 export class BaseNode {

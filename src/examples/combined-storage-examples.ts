@@ -33,22 +33,22 @@ async function combinedStorageExamples() {
   console.log('File Lookup 500:', fileTree.lookup(500));
   console.log('File Lookup 1000:', fileTree.lookup(1000));
 
-  // Test 2: Redis Storage
-  console.log('\n--- Test Redis Storage ---');
-  const redisStorage = new RedisStorageProvider();
+  // Test 2: Redis Storage (with sharding)
+  console.log('\n--- Test Redis Storage (Sharded) ---');
+  const redisStorage = new RedisStorageProvider('bplus-tree-data');
   await redisStorage.connect();
 
   try {
-    console.time('redis-save');
-    await tree.save(redisStorage);
-    console.timeEnd('redis-save');
-    console.log('Drzewo zapisane do Redis pod kluczem bplus-tree-data');
+    console.time('redis-save-sharded');
+    await tree.saveSharded(redisStorage);
+    console.timeEnd('redis-save-sharded');
+    console.log('Drzewo zapisane do Redis z shardingiem (klucze: bplus-tree-data:level:*)');
 
     const redisTree = new BPlusTree<string>();
-    console.time('redis-load');
-    await redisTree.load(redisStorage);
-    console.timeEnd('redis-load');
-    console.log('Drzewo wczytane z Redis');
+    console.time('redis-load-sharded');
+    await redisTree.loadSharded(redisStorage);
+    console.timeEnd('redis-load-sharded');
+    console.log('Drzewo wczytane z Redis (sharded)');
 
     console.log('Redis Lookup 1:', redisTree.lookup(1));
     console.log('Redis Lookup 500:', redisTree.lookup(500));

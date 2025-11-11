@@ -1,4 +1,4 @@
-import { BaseNode } from './BaseNode.js';
+import { BaseNode } from './BaseNode';
 
 
 export class LeafNode<T = unknown> extends BaseNode {
