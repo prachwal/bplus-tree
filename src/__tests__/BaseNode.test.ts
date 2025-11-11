@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
-import { BaseNode } from '../lib/bplus-tree';
+import { BaseNode } from '../lib/BaseNode';
 
 // Przykładowe testy dla B-Plus Tree
 describe('BaseNode', () => {

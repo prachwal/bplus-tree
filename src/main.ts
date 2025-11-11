@@ -1,4 +1,4 @@
-import { BPlusTree } from './lib/bplus-tree';
+import { BPlusTree } from './lib/BPlusTree.js';
 
 // ==================== PRZYKŁAD UŻYCIA ====================
 

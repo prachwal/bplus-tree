@@ -1,44 +1,16 @@
-export class BaseNode {
-  level: number;
-  count: number = 0;
-
-  constructor(level: number) {
-    this.level = level;
-  }
-
-  isLeaf(): boolean {
-    return this.level === 0;
-  }
-
-  isInner(): this is InnerNode {
-    return this.level > 0;
-  }
-}
-
-export class InnerNode extends BaseNode {
-  keys: number[] = [];
-  children: BaseNode[] = [];
-
-  constructor(level: number) {
-    super(level);
-  }
-}
-
-export class LeafNode<T = unknown> extends BaseNode {
-  keys: number[] = [];
-  values: T[] = [];
-  next: LeafNode<T> | null = null;
-
-  constructor() {
-    super(0);
-  }
-}
+import { encode, decode } from '@msgpack/msgpack';
+import { StorageProvider } from './StorageProvider.js';
+import { BaseNode } from './BaseNode.js';
+import { InnerNode } from './InnerNode.js';
+import { LeafNode } from './LeafNode.js';
 
 export class BPlusTree<T = unknown> {
   root: BaseNode | null = null;
-  private readonly capacity: number = 4; // zwiększone do 4 – lepsze wizualnie, mniej poziomów
+  private readonly capacity: number;
 
-  constructor() {}
+  constructor(capacity: number = 100) {
+    this.capacity = capacity;
+  }
 
   insert(key: number, value: T): void {
     if (!this.root) {
@@ -311,5 +283,65 @@ export class BPlusTree<T = unknown> {
       }
     }
     console.log(chain.join(' --> ') + ' --> null');
+  }
+
+  // Persistent storage methods using provider
+  async save(storage: StorageProvider): Promise<void> {
+    const data = this.serialize(this.root);
+    await storage.save(data);
+  }
+
+  async load(storage: StorageProvider): Promise<void> {
+    const data = await storage.load();
+    this.root = this.deserialize(data);
+  }
+
+  private serialize(node: BaseNode | null): Buffer {
+    const obj = this.serializeToObject(node);
+    return Buffer.from(encode(obj));
+  }
+
+  private deserialize(data: Buffer): BaseNode | null {
+    const obj = decode(data) as any;
+    return this.deserializeFromObject(obj);
+  }
+
+  private serializeToObject(node: BaseNode | null): any {
+    if (!node) return null;
+    if (node.isLeaf()) {
+      const leaf = node as LeafNode<T>;
+      return {
+        type: 'leaf',
+        keys: leaf.keys,
+        values: leaf.values,
+        // next is ignored for simplicity
+      };
+    } else {
+      const inner = node as InnerNode;
+      return {
+        type: 'inner',
+        level: inner.level,
+        keys: inner.keys,
+        children: inner.children.map(child => this.serializeToObject(child)),
+      };
+    }
+  }
+
+  private deserializeFromObject(data: any): BaseNode | null {
+    if (!data) return null;
+    if (data.type === 'leaf') {
+      const leaf = new LeafNode<T>();
+      leaf.keys = data.keys;
+      leaf.values = data.values;
+      leaf.count = data.keys.length;
+      return leaf;
+    } else if (data.type === 'inner') {
+      const inner = new InnerNode(data.level);
+      inner.keys = data.keys;
+      inner.children = data.children.map((childData: any) => this.deserializeFromObject(childData));
+      inner.count = inner.keys.length;
+      return inner;
+    }
+    throw new Error('Invalid serialized data');
   }
 }
